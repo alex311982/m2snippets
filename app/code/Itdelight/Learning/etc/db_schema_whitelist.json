@@ -1,0 +1,16 @@
+{
+    "call_requests": {
+        "column": {
+            "id": true,
+            "name": true,
+            "phone": true,
+            "description": true,
+            "status": true,
+            "created_datetime": true,
+            "updated_datetime": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

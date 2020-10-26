@@ -1,0 +1,67 @@
+<?php
+
+/** @var Itdelight\Learning\Block\Widget\Callmerequest $block */
+/** @var Itdelight\Learning\ViewModel\WidgetDataProvider $viewModel */
+
+?>
+
+<form class="form callmerequest"
+      action="<?= $block->getFormAction() ?>"
+      id="callmerequest-form"
+      method="post"
+      data-hasrequired="<?= __('* Required Fields') ?>"
+      data-mage-init='{"validation":{}}'>
+    <fieldset class="fieldset">
+        <legend class="legend"><span><?= __('Write Us') ?></span></legend><br />
+        <div class="field note no-label">
+            <?= __('Send us a note and we’ll get back to you as quickly as possible.') ?>
+        </div>
+        <div class="field name required">
+            <label class="label" for="name"><span><?= __('Name') ?></span></label>
+            <div class="control">
+                <input name="name"
+                       id="name"
+                       title="<?= __('Name') ?>"
+                       value="<?= $viewModel->getUserName() ?>"
+                       class="input-text"
+                       type="text"
+                       data-validate="{required:true}"/>
+            </div>
+        </div>
+        <div class="field phone required">
+            <label class="label" for="phone"><span><?= __('Phone Number') ?></span></label>
+            <div class="control">
+                <input name="phone"
+                       id="phone"
+                       title="<?= __('Phone Number') ?>"
+                       value="<?= $viewModel->getUserTelephone() ?>"
+                       class="input-text"
+                       type="tel"
+                       data-validate="{required:true}"
+                />
+            </div>
+        </div>
+        <div class="field description required">
+            <label class="label" for="comment">
+                <span><?= __('What’s on your mind?') ?></span>
+            </label>
+            <div class="control">
+                <textarea name="description"
+                          id="description"
+                          title="<?= __('What’s on your mind?') ?>"
+                          class="input-text"
+                          cols="5"
+                          rows="3"
+                          data-validate="{required:true}"><?= $viewModel->getUserComment() ?></textarea>
+            </div>
+        </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <input type="hidden" name="hideit" id="hideit" value="" />
+            <button type="submit" title="<?= __('Submit') ?>" class="action submit primary">
+                <span><?= __('Submit') ?></span>
+            </button>
+        </div>
+    </div>
+</form>

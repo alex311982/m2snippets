@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">callmerequest_form.callmerequest_form_data_source</item>
+            <item name="deps" xsi:type="string">callmerequest_form.callmerequest_form_data_source</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="label" xsi:type="string" translate="true">General Information</item>
+
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">callmerequest_form</item>
+        </item>
+    </argument>
+
+    <settings>
+        <buttons>
+            <button name="save" class="Itdelight\Learning\Block\Adminhtml\Callmerequest\Edit\Button\Save"/>
+            <button name="back" class="Itdelight\Learning\Block\Adminhtml\Callmerequest\Edit\Button\Back"/>
+        </buttons>
+        <deps>
+            <dep>callmerequest_form.callmerequest_form_data_source</dep>
+        </deps>
+    </settings>
+
+    <dataSource name="callmerequest_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+                <item name="submit_url" path="callmerequest/callmerequest/save" xsi:type="url" />
+            </item>
+        </argument>
+
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Itdelight\Learning\Ui\DataProvider\Callmerequest\Form\CallmerequestDataProvider</argument>
+            <argument name="name" xsi:type="string">callmerequest_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+        </argument>
+    </dataSource>
+
+    <fieldset name="callmerequest">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Change status</item>
+            </item>
+        </argument>
+
+        <field name="id" formElement="hidden">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                </item>
+            </argument>
+        </field>
+
+        <field name="status">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Itdelight\Learning\Model\Status</item>
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Status</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="source" xsi:type="string">callmerequest</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+    </fieldset>
+</form>

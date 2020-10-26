@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="call_requests" resource="default" engine="innodb" comment="Collect requests for back calling">
+        <column xsi:type="smallint" name="id" padding="6" unsigned="false" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="25" comment="Name"/>
+        <column xsi:type="varchar" name="phone" nullable="false" length="25" comment="Phone"/>
+        <column xsi:type="varchar" name="description" nullable="false" length="255" comment="Description"/>
+        <column xsi:type="varchar" name="status" length="32" nullable="false" default="new" comment="Status"/>
+        <column xsi:type="timestamp" name="created_datetime" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created Datetime"/>
+        <column xsi:type="timestamp" name="updated_datetime" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated Datetime"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+</schema>

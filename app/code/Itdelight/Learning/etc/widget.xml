@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:helloworld:Magento_Widget:etc/widget.xsd">
+    <widget class="Itdelight\Learning\Block\Widget\Callmerequest" id="itdelight_learning_callrequests">
+        <label>Call me request</label>
+        <description>The form is for entering call me back request</description>
+    </widget>
+</widgets>

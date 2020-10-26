@@ -1,0 +1,20 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Itdelight\Learning\Block\Widget\Callmerequest">
+        <plugin name="itdelight_learning_assign_variable_to_block" type="Itdelight\Learning\Plugin\AssignVariableToBlock" sortOrder="1" disabled="false"/>
+    </type>
+    <type name="Itdelight\Learning\ViewModel\WidgetDataProvider">
+        <arguments>
+            <argument name="helper" xsi:type="object">Itdelight\Learning\Helper\Data</argument>
+        </arguments>
+    </type>
+    <type name="Itdelight\Learning\Helper\Data">
+        <arguments>
+            <argument name="customerViewHelper" xsi:type="object">Magento\Customer\Helper\View</argument>
+        </arguments>
+    </type>
+    <type name="Itdelight\Learning\Plugin\AssignVariableToBlock">
+        <arguments>
+            <argument name="viewModel" xsi:type="object">Itdelight\Learning\ViewModel\WidgetDataProvider</argument>
+        </arguments>
+    </type>
+</config>

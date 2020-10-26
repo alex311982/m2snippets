@@ -1,0 +1,8 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Itdelight\Learning\Model\ResourceModel\Callrequest\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">call_requests</argument>
+            <argument name="resourceModel" xsi:type="string">Itdelight\Learning\Model\ResourceModel\Callrequest\Collection</argument>
+        </arguments>
+    </type>
+</config>
