@@ -10,14 +10,26 @@ magentoLang="en_AU"
 magentoCurr="AUD"
 magentoOwner="alex"
 magentoDbHost="localhost"
-magentoDbName="magento"
-magentoDbUser="user"
+magentoDbName="magento22"
+magentoDbUser="user22"
 magentoDbPass="user_pass"
 mysqlPass="root_pass"
+magentoDir="magento_m2_install"
+magentoBackendFrontname="admin"
+magentoAdminFirstName="AdminName"
+magentoAdminLastName="AdminLastName"
+magentoHost="http://magento.local/"
+magentoUseRewrites=1
 
 magentoAdminLogin="admin"
 magentoAdminPass="admin_pass"
 magentoAdminEmail="admin@admin.com"
+
+PHP=$(which php)
+PHP_MEM_LIMIT=' -d memory_limit=-1'
+COMPOSER=$(which composer)
+COMPOSER_PATH="$PHP$PHP_MEM_LIMIT $COMPOSER"
+BIN_MAGENTO="/bin/magento"
 
 
 mkLog(){
@@ -34,32 +46,32 @@ MYSQL_SCRIPT
 }
 
 installMagento(){
-mkdir magento_m2_install
-sudo chown -R ${magentoOwner}:www-data magento_m2_install
-cd magento_m2_install
-sudo composer create-project --repository-url=https://${magentoRepoUser}:${magentoRepoPass}@repo.magento.com/ magento/project-community-edition .
-sudo find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-sudo find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+mkdir $(pwd)/${magentoDir}
+sudo chown -R ${magentoOwner}:www-data $(pwd)/${magentoDir}
+cd $(pwd)/${magentoDir}
+sudo ${COMPOSER_PATH} create-project --repository-url=https://${magentoRepoUser}:${magentoRepoPass}@repo.magento.com/ magento/project-community-edition .
+sudo find var generated vendor $(pwd)/pub/static $(pwd)/pub/media $(pwd)/app/etc -type f -exec chmod g+w {} +
+sudo find var generated vendor $(pwd)/pub/static $(pwd)/pub/media $(pwd)/app/etc -type d -exec chmod g+ws {} +
 sudo chown -R ${magentoOwner}:www-data .
-sudo chmod u+x ./bin/magento
+sudo chmod u+x $(pwd)${BIN_MAGENTO}
 
-./bin/magento setup:install \
---base-url=http://magento.local/ \
+${PHP}${PHP_MEM_LIMIT} $(pwd)${BIN_MAGENTO} setup:install \
+--base-url=${magentoHost} \
 --db-host="${magentoDbHost}" \
 --db-name="${magentoDbName}" \
 --db-user="${magentoDbUser}" \
 --db-password="${magentoDbPass}" \
---backend-frontname="admin" \
---admin-firstname="Admin" \
---admin-lastname="Admin" \
+--backend-frontname="${magentoBackendFrontname}" \
+--admin-firstname=${magentoAdminFirstName} \
+--admin-lastname=${magentoAdminLastName} \
 --admin-email="${magentoAdminEmail}" \
 --admin-user="${magentoAdminLogin}" \
 --admin-password="${magentoAdminPass}" \
 --language="${magentoLang}" \
 --currency="${magentoCurr}" \
 --timezone="${magentoTz}" \
---use-rewrites=1
-./bin/magento deploy:mode:set developer
+--use-rewrites=${magentoUseRewrites}
+${PHP}${PHP_MEM_LIMIT} $(pwd)${BIN_MAGENTO} deploy:mode:set developer
 }
 
 doInstall(){
