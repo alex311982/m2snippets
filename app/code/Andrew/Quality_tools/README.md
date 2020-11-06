@@ -26,6 +26,11 @@ composer require --dev magento/magento-coding-standard
 vendor/bin/phpcs --standard=Magento2 app/code/
 ```
 
+Если будут проблемы с обнаружением правил для magento 2 нужно добавить конфигурацию
+```
+vendor/bin/phpcs --config-set installed_paths ./vendor/magento/magento-coding-standard/
+```
+
 И после этого автоматически править код, если есть ошибки:
 ```
 vendor/bin/phpcbf --standard=Magento2 app/code/
@@ -38,7 +43,7 @@ vendor/bin/phpcbf --standard=Magento2 app/code/
 - Заходим в Preferences -> Editor -> Inspections -> PHP -> Quality Tools -> PHP Code Sniffer validation для установки правил проверки кода
 - Ставим галочку напротив PHP Code Sniffer validation
 - Выбираем Coding standart: Custom
-- Указываем путь к рулам Магенты: vendor/magento/magento-coding-standard/Magento2/ruleset.xml
+- Указываем путь к рулам Магенты: ./dev/tests/static/framework/Magento/ruleset.xml
 
 
 # PhpStan
