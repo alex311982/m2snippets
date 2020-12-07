@@ -2,15 +2,14 @@
 
 Квота содержит данные для создания ордера. Это временная информация и может быть изменена пользователем.
 После создания квоты нельзя измененить данный квоты. По своему содержанию квота содержит те же данные, что и корзина.
-Теоретически квота это оффер для юзера на покупку, и если он его принимает (проходит все стэпы чекаута) она конвертируется в офер.
+Теоретически квота - это оффер для юзера на покупку, и если он его принимает (проходит все стэпы чекаута) она конвертируется в офер.
 
 Для чего Магента создает квоты:
 
 - для сохранения данных о продуктах в шопинг-карте вместе с инфой про цены, количество и опции
 - для сохранения выбраного билинга и адреса шипинга
 - для сохранения цен шипинг
-- для сохранения промежуточных итоговых цен (к примеру, цен без учета налога), 
-  дополнительных цен (за доставку, налоги, ...) и купоны для расчета результирующей стоимости покупки
+- для сохранения промежуточных итоговых цен (к примеру, цен без учета налога), дополнительных цен (за доставку, налоги, ...) и купоны для расчета результирующей стоимости покупки
 - для сохранения выбранного метода оплаты
 
 Таблицы для сохранения квот в базе данных:
@@ -24,14 +23,67 @@
 - quote_payment
 - quote_shipping_rate
 
-Используемая модель для работы с квотами - Magento\Quote\Model\Quote.
+Модель Корзины используется для манипулирования (добавление, удаление и обновление) элементов в квотах. 
+Она выполняет дополнительную проверку, например установка минимального количества заказов для позиции, когда она добавляется в корзину.
+Когда товар добавляется в корзину, вызывается метод _prepareProduct(), чтобы подготовить данные товара для хранения в квоте. 
+Для простых товаров загружаются все данные товара в модель. 
+Сгруппированный товар, например, загружает данные всех связанных товаров.
+Для получения информации о товаре, например, специальных и настраиваемых параметров,
+он превращается в объект /Magento/Sales/Quote/Item/Option и сохраняется в базе данных в таблице quote_item_option.
+
+####Параметры потока оформления заказа
+
+По умолчанию предусмотрено два варианта оформления заказа: одностраничный и с мульти-доставкой. 
+В мульти-доставке товарные позиции добавляются к каждому адресу доставки (хотя виртуальные элементы добавляются к адресу оплаты), 
+а не в конце оформления заказа для каждого адреса. 
+Это отражается в базе данных, где эти позиции сохраняются в таблице quote_address_item, 
+тогда как квоты одностраничного заказа в таблице quote_item.
+
+Сгруппированные товары добавляются в корзину как несколько отдельных товаров, поэтому их можно выбирать для доставки на различные адреса, используя регулярный процесс мульти-доставки. 
+Однако связанные товары (bundled) нельзя разделить между несколькими адресами.
+
+####Модели квоты
+Используемая модель для работы с квотами - Magento\Quote\Model\Quote
+
+![quote model relations](pictures/class_magento_quote_model.png)
+
 Используемая модель для работы с адрессными квотами - Magento\Quote\Model\Quote\Address.
+
+![quote item_model relations](pictures/class_magento_quote_address_model.png)
+
 Квота обычно содержит 2 адреса (биллинг и шиппинг), но может содержать и более, если есть несколько адресов доставки или нет ни одного.
 Если квота не будет содержать адрес, то общая цена не будет зависить от прайс-рулов конкретной страны. 
 Если квота содержит виртуальные продукты, то тогда также адрес доставки не будет учитываться
 и будет вызван метод isVirtual(), для расчета общей цены, и только билинг-адрес будет браться во внимание. 
 Для продуктов квоты применяется модель - Magento\Quote\Model\Quote\Item.
+
+![quote item_model relations](pictures/class_magento_quote_item_model.png)
+
 Для платежа - Magento\Quote\Model\Quote\Payment. 
+
+![quote item_model relations](pictures/class_magento_quote_payment_model.png)
+
+####Модели тотала квоты
+
+Квоты позиций, ценовые правила корзины и расходы на доставку составляют общую стоимость квоты.
+Платежные адреса и адреса доставки также влияют на общую сумму, так как они используются для определения налоговых ставок, способов доставки и способов оплаты.
+В моделях итога отслеживается стоимость заказа или квоты. 
+Каждый из итогов имеет код, который связан с ним, который может быть использован для его получения и обработки. 
+Модели итога обрабатывают адрес, чтобы добавить в коллекцию итоги для него. С помощью адреса модели получают доступ к квоте и квотам позиций.
+Модели для расчета тотала можно расширить путем расширения класса \Magento\Quote\Model\Quote\Address\Total\AbstractTotal. Например, существующие модели тотала в чистой Магенто:
+
+```xml
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="subtotal" instance="Magento\Quote\Model\Quote\Address\Total\Subtotal" sort_order="100"/>
+            <item name="shipping" instance="Magento\Quote\Model\Quote\Address\Total\Shipping" sort_order="350"/>
+            <item name="grand_total" instance="Magento\Quote\Model\Quote\Address\Total\Grand" sort_order="550"/>
+        </group>
+    </section>
+</config>
+```
+
 
 ###Правила (рулы) на странице чекаута.
 
@@ -151,3 +203,113 @@
 - Пересоздать ордер из админки
 - Переконфигурация добавленного продукта в корзину путем изменения кастомных опций
 - Если неавторизированный кастомер добавил товары в корзину, то при авторизации они останутся в квоте
+
+###Программное создание квоты и ордера
+
+К примеру, есть полноценный массив данных для создания сперва квоты, а потом из нее сконвертировать ордер:
+
+```
+<?php
+
+$order = [
+    'currency_id' => 'USD',
+    'email' => 'hello@example.com',
+    'shipping_address' => ['firstname' => 'John',
+        'lastname' => 'Doe',
+        'street' => 'xxxxxx',
+        'city' => 'xxxxxxx',
+        'country_id' => 'US',
+        'region' => 'xxxxx',
+        'postcode' => '85001',
+        'telephone' => '52556542',
+        'fax' => '3242322556',
+        'save_in_address_book' => 1],
+    'items' => [
+        ['product_id' => '1', 'qty' => 1],
+        ['product_id' => '2', 'qty' => 2]]
+    ];
+?>
+```
+
+Создадим хэлпер с методом для создания квоты из этих данных и конвертации в ордер:
+```
+<?php
+namespaceYourNameSpace\ModuleName\Helper;
+ 
+use Magento\Framework\App\Helper\AbstractHelper;
+ 
+class Data extends AbstractHelper
+{
+    public function __construct(\Magento\Framework\App\Helper\Context $context, \Magento\Store\Model\StoreManagerInterface $storeManager, \Magento\Catalog\Model\Product $product, \Magento\Framework\Data\Form\FormKey $formkey, \Magento\Quote\Model\QuoteFactory $quote, \Magento\Quote\Model\QuoteManagement $quoteManagement, \Magento\Customer\Model\CustomerFactory $customerFactory, \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository, \Magento\Sales\Model\Service\OrderService $orderService)
+    {
+        $this->storeManager = $storeManager;
+        $this->product = $product;
+        $this->formkey = $formkey;
+        $this->quote = $quote;
+        $this->quoteManagement = $quoteManagement;
+        $this->customerFactory = $customerFactory;
+        $this->customerRepository = $customerRepository;
+        $this->orderService = $orderService;
+        parent::__construct($context);
+    }
+ 
+    public function createOrder($order)
+    {
+      $store = $this->storeManager->getStore();
+      $websiteId = $this->storeManager->getStore()->getWebsiteId();
+      $customer = $this->customerFactory->create();
+      $customer->setWebsiteId($websiteId);
+      $customer->loadByEmail($order['email']); // load customet by email address
+      
+      if (!$customer->getEntityId()) {
+          //If not avilable then create this customer
+         $customer->setWebsiteId($websiteId)->setStore($store)->setFirstname($order['shipping_address']['firstname'])->setLastname($order['shipping_address']['lastname'])->setEmail($order['email'])->setPassword($order['email']);
+          $customer->save();
+      }
+      $quote = $this->quote->create(); // Create Quote Object
+      $quote->setStore($store); // Set Store
+      $customer = $this->customerRepository->getById($customer->getEntityId());
+      $quote->setCurrency();
+      $quote->assignCustomer($customer); // Assign quote to Customer
+      
+      //add items in quote
+      foreach ($order['items'] as $item) {
+          $product = $this->product->load($item['product_id']);
+          $product->setPrice($item['price']);
+          $quote->addProduct($product, intval($item['qty']));
+      }
+      
+      $quote->getBillingAddress()->addData($order['shipping_address']);
+      $quote->getShippingAddress()->addData($order['shipping_address']);
+      
+      // Collect Rates and Set Shipping & Payment Method
+      
+      $shippingAddress = $quote->getShippingAddress();
+      $shippingAddress->setCollectShippingRates(true)->collectShippingRates()->setShippingMethod('freeshipping_freeshipping');
+      $quote->setPaymentMethod('checkmo');
+      $quote->setInventoryProcessed(false);
+      $quote->save();
+      
+      // Set Sales Order Payment
+      $quote->getPayment()->importData(['method' => 'checkmo']);
+      
+      // Collect Totals & Save Quote
+      $quote->collectTotals()->save();
+      
+      // Create Order From Quote
+      $orderdata = $this->quoteManagement->submit($quote);
+      
+      $orderdata->setEmailSent(0);
+      $increment_id = $order->getRealOrderId();
+      
+      if ($orderdata->getEntityId()) {
+          $result['order_id'] = $orderdata->getRealOrderId();
+      } else {
+          $result = ['error' => 1, 'msg' => 'Your custom message'];
+      }
+      
+      return $result;
+    }
+}
+?>
+```
