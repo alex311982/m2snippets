@@ -52,5 +52,12 @@ Extension Attribute позволяет объеденять поля для ат
 - Сконфигурировать `extension_attributes.xml`
 - Создать плагин. Например на `getList`, для заполнения значений, так как нельзя использовать для нескалярных `<join>`
 
+#Создание расширяемой кастомной модели
+
+- `\Magento\Framework\Api\ExtensibleDataInterface` наша модель должна реализовывать этот интерфейс
+- Добавить методы `getExtensionAttributes` и `setExtensionAttributes` в наш интерфейс   
+- Реализовать методы `getExtensionAttributes` и `setExtensionAttributes`
+- Опционально вызывать `\Magento\Framework\Api\ExtensionAttribute\JoinProcessorInterface::process` в методах репозитория, которые используют коллекции в случае использования `<join>`
+
 
 
