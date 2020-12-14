@@ -326,3 +326,69 @@ class Data extends AbstractHelper
 }
 ?>
 ```
+
+###Как сконвертировать кастомное поле с квоты в ордер
+
+1. Создаем кастомные аттрибуты для квоты и ордера. Например, в файле app/code/[Namespace]/[Module]/etc/extension_attributes.xml:
+```
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Magento\Quote\Api\Data\CartInterface">
+         <attribute code="testfield" type="string" />
+    </extension_attributes>
+    <extension_attributes for="Magento\Sales\Api\Data\OrderInterface">
+         <attribute code="testfield" type="string" />
+    </extension_attributes>
+</config>
+```
+
+2. Создаем файл app/code/[Namespace]/[Module]/etc/fieldset.xml:
+```
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:DataObject/etc/fieldset.xsd">
+  <scope id="global">
+    <fieldset id="sales_convert_quote">
+      <field name="testfield">
+        <aspect name="to_order" />
+      </field>
+    </fieldset>
+  </scope>
+</config>
+```
+3. Подписываемся на событие sales_model_service_quote_submit_before:
+```
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_model_service_quote_submit_before">
+        <observer name="[Namespace]_[Module]_sales_model_service_quote_submit_before" instance="[Namespace]\[Module]\Observer\TestfieldObserver" />
+    </event>
+</config>
+```
+4. Создаем класс обзервера:
+```
+<?php
+
+#app/code/[Namespace]/[Module]/Observer/TestfieldObserver.php
+
+namespace Vendor\Module\Observer;
+ 
+use Magento\Framework\Event\ObserverInterface;
+ 
+class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
+{
+    protected $objectCopyService;
+    public function __construct(
+      \Magento\Framework\DataObject\Copy $objectCopyService,
+    ) {
+        $this->objectCopyService = $objectCopyService;
+    }
+ 
+    public function execute(\Magento\Framework\Event\Observer $observer)
+    {
+      $order = $observer->getEvent()->getData('order');
+      $quote = $observer->getEvent()->getData('quote');
+      $this->objectCopyService->copyFieldsetToTarget('sales_convert_quote', 'to_order', $quote, $order);
+      return $this;
+    }
+}
+```
+
+Таким образом мы скопировали кастомное поле из квоты в ордер.
