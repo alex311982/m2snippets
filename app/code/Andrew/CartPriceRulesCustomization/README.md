@@ -191,4 +191,4 @@ class Customer extends \Magento\Rule\Model\Condition\AbstractCondition
 Метод validate устанавливает значение кастомного аттрибута customer_first_order в состояние true или false, на основании
 которого в дальнейшем проверяется можно или нет елать кастомный дискаунт на основании нами созданного условия.
 
-![quote model relations](pictures/Flowchart.jpg)
+![flow custom cart rules](pictures/Flowchart.jpg)
