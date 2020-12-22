@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/topology.xsd">
+    <exchange name="magento-amqp" type="topic" connection="amqp">
+        <binding id="updateNewCustomerBinding" topic="new_customer.created" destinationType="queue"
+                 destination="new_customer.created"/>
+        <arguments>
+            <argument name="alternate-exchange" xsi:type="string">magento-log-exchange</argument>
+        </arguments>
+    </exchange>
+</config>
