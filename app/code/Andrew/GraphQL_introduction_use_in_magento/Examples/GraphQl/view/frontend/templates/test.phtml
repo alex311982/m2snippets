@@ -1,0 +1,18 @@
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "graphql-test": {
+                        "component": "Itdelight_GraphQl/js/graphql-test"
+                    }
+                }
+            }
+        }
+    }
+</script>
+<div data-bind="scope: 'graphql-test'">
+    <pre data-bind="text: JSON.stringify($data.result, null, 2)">
+        Loading...
+    </pre>
+</div>
