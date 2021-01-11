@@ -1,0 +1,17 @@
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "infinitscroll-products": {
+                        "component": "Itdelight_GraphQlUseMagentoApi/js/scroller",
+                        "template": "Itdelight_GraphQlUseMagentoApi/container"
+                    }
+                }
+            }
+        }
+    }
+</script>
+<div data-bind="scope: 'infinitscroll-products'">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+</div>
