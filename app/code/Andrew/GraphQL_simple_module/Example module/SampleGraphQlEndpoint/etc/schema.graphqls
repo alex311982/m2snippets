@@ -1,0 +1,12 @@
+type Query {
+    testcustomer(
+        email: String @doc(description: "email of the customer")
+    ): Testcustomer
+    @resolver(class: "Magento\\SampleGraphQlEndpoint\\Model\\Resolver\\Customer") @doc(description: "The testcustomer query returns information about a customer") @cache(cacheIdentity: "Magento\\SampleGraphQlEndpoint\\Model\\Resolver\\CacheIdentity\\CustomerCacheIdentities")
+}
+type Testcustomer @doc(description: "Testcustomer defines the customer name and other details") {
+    id: Int
+    firstname: String
+    lastname: String
+    email: String
+}
