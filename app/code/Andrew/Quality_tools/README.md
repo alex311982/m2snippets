@@ -62,7 +62,8 @@ P.S. Особенности настройки при альтернативны
 
 #### 1.1.3. Пути к стандартам кода
 
-* Сами стандарты PHP, как правило, поставляются с маджентой и находятся тут ``/<your_root_magento_path>/vendor/phpcompatibility/php-compatibility/PHPCompatibility``
+* Сами стандарты PHP, как правило, поставляются с маджентой и находятся тут ``dev/tests/static/framework/Magento/ruleset.xml``. Для их установки переходим в PhpStorm, Settings/Preferences -> Editor -> Inspections -> PHP_CodeSniffer validation, 
+  выбираем этот файл в Installed standart paths, затем выбрать в дробдауне Coding standart стандарт Magento.
 
 * (Опционально)Для установки правил проверки кода для проектов на Magento 2 можно установить кастомные маджентовские рулы:
 ```
